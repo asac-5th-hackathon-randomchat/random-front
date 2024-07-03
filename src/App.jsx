@@ -35,7 +35,7 @@ function App() {
   return (
     <div className='flex items-center justify-center h-[100vh] bg-blue-50 sm:flex p-8'>
       {!isConnected ? (
-        <div className='p-6 bg-white rounded-lg shadow-lg m-12 transition-opacity duration-500'>
+        <div className='p-6 bg-white rounded-lg shadow-lg m-12 transition-opacity duration-500  '>
           <div className='mb-4'>
             <input
               className='w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
@@ -54,7 +54,7 @@ function App() {
               onChange={handleRoomInputChange}
             />
           </div>
-          <div className='flex space-x-2'>
+          <div className='flex space-x-2 justify-center'>
             <button
               className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
               onClick={handleConnectChannel}
@@ -67,7 +67,7 @@ function App() {
         <div className='flex flex-col items-center bg-blue-200 rounded-lg'>
           <StompComponent chatRoomId={chatRoomId} username={username} />
           <button
-            className='mb-4 px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500'
+            className='mb-4 px-4 py-2  bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-gray-500'
             onClick={handleDisconnectChannel}
           >
             채팅방 나가기

@@ -26,6 +26,15 @@ function StompComponent({ chatRoomId, username }) {
       },
       reconnectDelay: 5000,
       onConnect: () => {
+        const joinMessage = {
+          sender: username,
+          chatRoomId: chatRoomId,
+          data: `${username}님이 입장하셨습니다.`,
+        }
+        stompClient.current.publish({
+          destination: `/pub/message`,
+          body: JSON.stringify(joinMessage),
+        })
         stompClient.current.subscribe(`/sub/channel/${chatRoomId}`, message => {
           try {
             const newMessage = JSON.parse(message.body)
@@ -44,6 +53,15 @@ function StompComponent({ chatRoomId, username }) {
 
   const disconnect = () => {
     if (stompClient.current) {
+      const leaveMessage = {
+        sender: username,
+        chatRoomId: chatRoomId,
+        data: `${username}님이 퇴장하셨습니다.`,
+      }
+      stompClient.current.publish({
+        destination: `/pub/message`,
+        body: JSON.stringify(leaveMessage),
+      })
       stompClient.current.deactivate(() => {
         console.log('Disconnected')
       })
@@ -74,10 +92,10 @@ function StompComponent({ chatRoomId, username }) {
   }, [chatRoomId])
 
   return (
-    <div className='flex flex-col bg-green-200 rounded-2xl h-[65vh] m-5 '>
+    <div className='flex flex-col bg-white rounded-2xl h-[65vh] m-5 '>
       <div className='flex-grow overflow-y-auto p-4'>
         {messages.map((item, index) => (
-          <div key={index} className='mb-2 p-2 bg-white rounded-md shadow'>
+          <div key={index} className='mb-2 p-2 bg-blue-50 rounded-md shadow'>
             <strong className='text-blue-500'>{item.sender}:</strong> {item.data}
           </div>
         ))}
