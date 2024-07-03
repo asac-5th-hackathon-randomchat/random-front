@@ -54,7 +54,7 @@ function StompComponent({ chatRoomId, username }) {
     if (stompClient.current && inputValue) {
       const body = {
         sender: username,
-        channelId: chatRoomId,
+        chatRoomId: chatRoomId,
         data: inputValue,
       }
       stompClient.current.publish({
