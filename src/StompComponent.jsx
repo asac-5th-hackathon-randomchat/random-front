@@ -26,15 +26,6 @@ function StompComponent({ chatRoomId, username }) {
       },
       reconnectDelay: 5000,
       onConnect: () => {
-        const joinMessage = {
-          sender: username,
-          chatRoomId: chatRoomId,
-          data: `${username}님이 입장하셨습니다.`,
-        }
-        stompClient.current.publish({
-          destination: `/pub/message`,
-          body: JSON.stringify(joinMessage),
-        })
         stompClient.current.subscribe(`/sub/channel/${chatRoomId}`, message => {
           try {
             const newMessage = JSON.parse(message.body)
@@ -53,15 +44,6 @@ function StompComponent({ chatRoomId, username }) {
 
   const disconnect = () => {
     if (stompClient.current) {
-      const leaveMessage = {
-        sender: username,
-        chatRoomId: chatRoomId,
-        data: `${username}님이 퇴장하셨습니다.`,
-      }
-      stompClient.current.publish({
-        destination: `/pub/message`,
-        body: JSON.stringify(leaveMessage),
-      })
       stompClient.current.deactivate(() => {
         console.log('Disconnected')
       })
