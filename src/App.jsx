@@ -1,34 +1,59 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import React, { useState } from 'react'
+import StompComponent from './StompComponent'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [chatRoomId, setChatRoomId] = useState('')
+  const [roomInputValue, setRoomInputValue] = useState('')
+  const [username, setUsername] = useState('')
+  const [nameInputValue, setNameInputValue] = useState('')
+
+  const handleRoomInputChange = event => {
+    setRoomInputValue(event.target.value)
+  }
+
+  const handleNameInputChange = event => {
+    setNameInputValue(event.target.value)
+  }
+
+  const handlerConnectChannel = () => {
+    setChatRoomId(roomInputValue)
+    setUsername(nameInputValue)
+    console.log(`Connecting to chat room: ${roomInputValue} as ${nameInputValue}`)
+  }
+
+  const handlerDisconnectChannel = () => {
+    setChatRoomId('')
+    setRoomInputValue('')
+    setUsername('')
+    setNameInputValue('')
+    console.log('Disconnected from chat room')
+  }
 
   return (
-    <>
+    <div>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <input
+          type='text'
+          placeholder='이름을 입력하세요'
+          value={nameInputValue}
+          onChange={handleNameInputChange}
+        />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      <div>
+        <input
+          type='text'
+          placeholder='채팅방 ID를 입력하세요'
+          value={roomInputValue}
+          onChange={handleRoomInputChange}
+        />
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+      <div>
+        <button onClick={handlerConnectChannel}>접속</button>
+        <button onClick={handlerDisconnectChannel}>해체</button>
+      </div>
+      {chatRoomId === '' ? null : <StompComponent chatRoomId={chatRoomId} username={username} />}
+    </div>
   )
 }
 
