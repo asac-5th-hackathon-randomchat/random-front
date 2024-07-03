@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Stomp } from '@stomp/stompjs'
+import { Client } from '@stomp/stompjs'
 
 function StompComponent({ chatRoomId, username }) {
   const stompClient = useRef(null)
@@ -11,12 +11,14 @@ function StompComponent({ chatRoomId, username }) {
   }
 
   const connect = () => {
-    const socket = new WebSocket('ws://localhost:8080/ws')
-    stompClient.current = Stomp.over(socket)
-    stompClient.current.connect(
-      { chatRoomId: chatRoomId },
-      frame => {
-        console.log('Connected: ' + frame)
+    const socketUrl = 'ws://localhost:8080/ws'
+    stompClient.current = new Client({
+      brokerURL: socketUrl,
+      connectHeaders: {
+        chatRoomId: `${chatRoomId}`,
+      },
+      reconnectDelay: 5000,
+      onConnect: () => {
         stompClient.current.subscribe(`/sub/channel/${chatRoomId}`, message => {
           try {
             const newMessage = JSON.parse(message.body)
@@ -26,15 +28,16 @@ function StompComponent({ chatRoomId, username }) {
           }
         })
       },
-      error => {
+      onStompError: error => {
         console.error('Connection error', error)
       },
-    )
+    })
+    stompClient.current.activate()
   }
 
   const disconnect = () => {
     if (stompClient.current) {
-      stompClient.current.disconnect(() => {
+      stompClient.current.deactivate(() => {
         console.log('Disconnected')
       })
     }
@@ -43,11 +46,14 @@ function StompComponent({ chatRoomId, username }) {
   const sendMessage = () => {
     if (stompClient.current && inputValue) {
       const body = {
-        sender: username, // 사용자 이름을 여기 입력
+        sender: username,
         channelId: chatRoomId,
         data: inputValue,
       }
-      stompClient.current.send(`/pub/message`, {}, JSON.stringify(body))
+      stompClient.current.publish({
+        destination: `/pub/message`,
+        body: JSON.stringify(body),
+      })
       setInputValue('')
     }
   }
@@ -55,7 +61,7 @@ function StompComponent({ chatRoomId, username }) {
   useEffect(() => {
     if (chatRoomId) {
       connect()
-      // 컴포넌트 언마운트 시 웹소켓 연결 해제
+      // Disconnect when component unmounts
       return () => disconnect()
     }
   }, [chatRoomId])
@@ -64,14 +70,14 @@ function StompComponent({ chatRoomId, username }) {
     <div>
       <ul>
         <div>
-          {/* 입력 필드 */}
+          {/* Input field */}
           <input type='text' value={inputValue} onChange={handleInputChange} />
-          {/* 메시지 전송 */}
+          {/* Send message */}
           <button onClick={sendMessage}>입력</button>
         </div>
-        {/* 메시지 리스트 출력 */}
+        {/* Message list */}
         {messages.map((item, index) => (
-          <div key={index} className='list-item'>
+          <div key={index}>
             <strong>{item.sender}:</strong> {item.data}
           </div>
         ))}
