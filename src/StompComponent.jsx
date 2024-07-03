@@ -74,10 +74,10 @@ function StompComponent({ chatRoomId, username }) {
   }, [chatRoomId])
 
   return (
-    <div className='flex flex-col bg-green-200 rounded-2xl h-[65vh] m-5 '>
+    <div className='flex flex-col bg-white rounded-2xl h-[65vh] m-5 '>
       <div className='flex-grow overflow-y-auto p-4'>
         {messages.map((item, index) => (
-          <div key={index} className='mb-2 p-2 bg-white rounded-md shadow'>
+          <div key={index} className='mb-2 p-2 bg-blue-50 rounded-md shadow'>
             <strong className='text-blue-500'>{item.sender}:</strong> {item.data}
           </div>
         ))}
