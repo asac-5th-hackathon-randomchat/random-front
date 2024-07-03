@@ -10,6 +10,12 @@ function StompComponent({ chatRoomId, username }) {
     setInputValue(event.target.value)
   }
 
+  const handleKeyDown = event => {
+    if (event.key === 'Enter') {
+      sendMessage()
+    }
+  }
+
   const connect = () => {
     const socketUrl = 'ws://localhost:8080/ws'
     stompClient.current = new Client({
@@ -67,21 +73,30 @@ function StompComponent({ chatRoomId, username }) {
   }, [chatRoomId])
 
   return (
-    <div>
-      <ul>
-        <div>
-          {/* Input field */}
-          <input type='text' value={inputValue} onChange={handleInputChange} />
-          {/* Send message */}
-          <button onClick={sendMessage}>입력</button>
-        </div>
-        {/* Message list */}
+    <div className='flex flex-col bg-green-200 rounded-2xl h-[65vh] m-10 '>
+      <div className='flex-grow overflow-y-auto p-4'>
         {messages.map((item, index) => (
-          <div key={index}>
-            <strong>{item.sender}:</strong> {item.data}
+          <div key={index} className='mb-2 p-2 bg-white rounded-md shadow'>
+            <strong className='text-blue-500'>{item.sender}:</strong> {item.data}
           </div>
         ))}
-      </ul>
+      </div>
+      <div className='flex my-4 mx-2'>
+        <input
+          className='flex-grow p-2 border border-blue-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+          type='text'
+          value={inputValue}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown} // 엔터 키 이벤트 처리
+          placeholder='메시지를 입력하세요'
+        />
+        <button
+          className='p-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
+          onClick={sendMessage}
+        >
+          입력
+        </button>
+      </div>
     </div>
   )
 }
