@@ -22,6 +22,7 @@ function StompComponent({ chatRoomId, username }) {
       brokerURL: socketUrl,
       connectHeaders: {
         chatRoomId: `${chatRoomId}`,
+        sender: `${username}`,
       },
       reconnectDelay: 5000,
       onConnect: () => {
